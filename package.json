@@ -1,0 +1,19 @@
+{
+  "name": "kafka-demo",
+  "version": "1.0.0",
+  "description": "Test kafka",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "kafka-node": "^5.0.0",
+    "nodemon": "^2.0.4",
+    "websocket": "^1.0.31"
+  }
+}
