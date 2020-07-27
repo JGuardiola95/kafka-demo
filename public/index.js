@@ -11,16 +11,16 @@ $(document).ready(function () {
     }]
   }
   var updateData = function (oldVal, newVal) {
-    var labels = oldVal["labels"];
-    var dataSetInitial = oldVal["datasets"][0]["data"];
-    labels.shift();
-    count++;
-    labels.push(count.toString());
-    var newData = Math.floor(newVal);
-    dataSetInitial.push(newData);
-    dataSetInitial.shift();
-  };
-  var ctx = document.getElementById("myChart").getContext("2d");
+    var labels = oldVal["labels"]
+    var dataSetInitial = oldVal["datasets"][0]["data"]
+    labels.shift()
+    count++
+    labels.push(count.toString())
+    var newData = Math.floor(newVal)
+    dataSetInitial.push(newData)
+    dataSetInitial.shift()
+  }
+  var ctx = document.getElementById("myChart").getContext("2d")
   var chart = new Chart(ctx, {
     type: 'line',
     data: data
@@ -29,28 +29,33 @@ $(document).ready(function () {
   function webSocketInvoke() {
 
     if ("WebSocket" in window) {
-      console.log("WebSocket is supported by your Browser!");
-      var ws = new WebSocket("ws://localhost:3000/", "echo-protocol");
+      var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
 
       ws.onopen = function () {
-        console.log("Connection created");
+        console.log("Connection created")
       };
 
       ws.onmessage = function (evt) {
-        var received_msg = evt.data;
-        updateData(data, evt.data);
-        chart = new Chart(ctx, {
-          type: 'line',
-          data: data
-        })
-        console.log(received_msg);
-      };
+        console.log('WS EVENT', evt)
+        console.log('TYPEOFDATA', typeof JSON.parse(evt.data))
+        var receivedMsg = JSON.parse(evt.data)
+        if (typeof receivedMsg === 'number') {
+          updateData(data, evt.data)
+          chart = new Chart(ctx, {
+            type: 'line',
+            data: data
+          })
+        } else {
+          console.log("OTHER MSG")
+        }
+        console.log(receivedMsg)
+      }
 
       ws.onclose = function () {
-        console.log("Connection closed");
-      };
+        console.log("Connection closed")
+      }
     } else {
-      alert("WebSocket NOT supported by your Browser!");
+      alert("WebSocket NOT supported by your Browser!")
     }
   }
   webSocketInvoke();

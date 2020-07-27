@@ -1,45 +1,81 @@
-const express = require("express");
-let WebSocketServer = require('websocket').server;
 require('dotenv').config()
-const path = require('path');
+const express = require("express")
+const Vue = require('vue')
+// const renderer = require('vue-server-renderer').createRenderer()
+const createApp = require('./app/app')
+const path = require('path')
+const template = require('fs').readFileSync('./index.template.html', 'utf-8');
+
+const renderer = require('vue-server-renderer').createRenderer({
+  template,
+});
+let WebSocketServer = require('websocket').server
 
 
 const kafkaConsumer = require("./kafka/consumer")
+const { create } = require('domain')
 
-const app = express();
+const server = express()
 
-app.get('/public/index.js', function (req, res) {
-  res.sendFile(path.join(__dirname + '/public/index.js'));
-});
-
-app.get('/', (req, res) => {
-  res.sendFile(process.cwd() + '/views/index.html');
+server.get('/public/index.js', function (req, res) {
+  res.sendFile(path.join(__dirname + '/public/index.js'))
 })
 
-let server = app.listen(3000, () => console.log("App listening on port 3000!"));
+server.get('/', (req, res) => {
+  console.log("ROOT")
+  res.sendFile(process.cwd() + '/views/index.html')
+})
+
+// server.get('/test', (req, res) => {
+//   console.log('TESTING asid')
+//   res.send('hello test')
+// })
+
+server.get('/test', (req, res) => {
+  const context = {
+    title: 'KAFKA DEMO',
+    meta: `
+        <meta name="keyword" content="vue,ssr">
+        <meta name="description" content="vue srr demo">
+    `,
+    url: req.url
+  };
+  const app = createApp(context)
+
+  renderer.renderToString(app, context, (err, html) => {
+    if (err) {
+      console.log("SERV ERROR", err)
+      res.status(500).end('Internal Server Error')
+      return
+    }
+    res.end(html)
+  })
+})
+
+let wsServer = server.listen(3000, () => console.log("app listening on port 3000!"))
 wsServer = new WebSocketServer({
-  httpServer: server,
+  httpServer: wsServer,
   autoAcceptConnections: false
-});
+})
 
 function originIsAllowed(origin) {
-  return true;
+  return true
 }
 
 wsServer.on('request', function (request) {
   if (!originIsAllowed(request.origin)) {
-    request.reject();
-    console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
-    return;
+    request.reject()
+    console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.')
+    return
   }
 
-  let connection = request.accept('echo-protocol', request.origin);
-  console.log((new Date()) + ' Connection accepted.');
+  let connection = request.accept('echo-protocol', request.origin)
+  console.log((new Date()) + ' Connection accepted.')
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
-      console.log('Received Message: ' + message.utf8Data);
+      console.log('Received Message: ' + message.utf8Data)
     } else if (message.type === 'binary') {
-      console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+      console.log('Received Binary Message of ' + message.binaryData.length + ' bytes')
       // connection.sendBytes(message.binaryData);
     }
   });
@@ -50,4 +86,4 @@ wsServer.on('request', function (request) {
   });
 });
 
-module.exports = app
+module.exports = server
