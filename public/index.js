@@ -31,7 +31,9 @@ $(document).ready(function () {
     if ("WebSocket" in window) {
       // var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
       const HOST = location.origin.replace(/^http/, 'ws');
-      let ws = new WebSocket(`${HOST}/3000`, 'echo-protocol');
+      let ws = new WebSocket(`${HOST}:16670`, 'echo-protocol');
+      // UNCOMMENT FOR LOCAL DEVELOPMENT
+      // let ws = new WebSocket(`${HOST}`, 'echo-protocol');
       console.log("HOST PORT", HOST)
       console.log("WEB SOCKET", ws)
       ws.onopen = function () {
