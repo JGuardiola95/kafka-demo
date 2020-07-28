@@ -36,19 +36,19 @@ $(document).ready(function () {
       };
 
       ws.onmessage = function (evt) {
-        console.log('WS EVENT', evt)
-        console.log('TYPEOFDATA', typeof JSON.parse(evt.data))
         var receivedMsg = JSON.parse(evt.data)
-        if (typeof receivedMsg === 'number') {
+        if ((receivedMsg.content && typeof receivedMsg.content === 'number' && receivedMsg.content <= 20) || typeof receivedMsg === 'number' && receivedMsg <= 20) {
+          console.log("UPODATEING EVENT", receivedMsg)
           updateData(data, evt.data)
           chart = new Chart(ctx, {
             type: 'line',
             data: data
           })
-        } else {
-          console.log("OTHER MSG")
+        } else if (typeof receivedMsg.content === 'string') {
+          console.log("RECEIVED MSG", receivedMsg)
+          alertify.success(receivedMsg.content);
         }
-        console.log(receivedMsg)
+
       }
 
       ws.onclose = function () {

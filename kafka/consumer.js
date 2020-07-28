@@ -1,16 +1,19 @@
 let kafka = require('kafka-node');
 
 module.exports = (wssConection) => {
+  let topicName = 'test'
   let Consumer = kafka.Consumer,
     client = new kafka.KafkaClient({
       kafkaHost: `${process.env.BROKER_HOST}:${process.env.BROKER_PORT}`
     }),
     consumer = new Consumer(
       client, [{
-        topic: 'test',
-        partition: 0
+        topic: topicName,
+        partition: 0,
+        offset: 100
       }], {
-        autoCommit: false
+        autoCommit: false,
+        fromOffset: true
       });
   consumer.on('message', function (message) {
     // console.log("MESSAGE FROM PRODUCER",message);
