@@ -29,14 +29,16 @@ $(document).ready(function () {
   function webSocketInvoke() {
 
     if ("WebSocket" in window) {
-      var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
+      // var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
+      const HOST = location.origin.replace(/^http/, 'ws');
+      let ws = new WebSocket(host);
 
       ws.onopen = function () {
         console.log("Connection created")
       };
 
       ws.onmessage = function (evt) {
-        var receivedMsg = JSON.parse(evt.data)
+        let receivedMsg = JSON.parse(evt.data)
         if ((receivedMsg.content && typeof receivedMsg.content === 'number' && receivedMsg.content <= 20) || typeof receivedMsg === 'number' && receivedMsg <= 20) {
           console.log("UPODATEING EVENT", receivedMsg)
           updateData(data, evt.data)
