@@ -10,12 +10,13 @@ module.exports = (wssConection) => {
       client, [{
         topic: topicName,
         partition: 0,
-        offset: 100
+        offset: 140
       }], {
         autoCommit: false,
         fromOffset: true
       });
   consumer.on('message', function (message) {
+    console.log("MESSAGE", message)
     // console.log("MESSAGE FROM PRODUCER",message);
     wssConection.sendUTF(message.value);
   });

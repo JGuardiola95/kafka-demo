@@ -23,7 +23,18 @@ $(document).ready(function () {
   var ctx = document.getElementById("myChart").getContext("2d")
   var chart = new Chart(ctx, {
     type: 'line',
-    data: data
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
   })
 
   function webSocketInvoke() {
@@ -40,7 +51,7 @@ $(document).ready(function () {
 
       ws.onmessage = function (evt) {
         let receivedMsg = JSON.parse(evt.data)
-        if ((receivedMsg.content && typeof receivedMsg.content === 'number' && receivedMsg.content <= 20) || typeof receivedMsg === 'number' && receivedMsg <= 20) {
+        if ((receivedMsg.content && typeof receivedMsg.content === 'number' && receivedMsg.content <= 20 && receivedMsg.content >= 0) || typeof receivedMsg === 'number' && receivedMsg <= 20 && receivedMsg >= 0) {
           console.log("UPODATEING EVENT", receivedMsg)
           updateData(data, evt.data)
           chart = new Chart(ctx, {
@@ -49,7 +60,7 @@ $(document).ready(function () {
           })
         } else if (typeof receivedMsg.content === 'string') {
           console.log("RECEIVED MSG", receivedMsg)
-          alertify.success(receivedMsg.content);
+          alertify.success(`${receivedMsg.producer_id ? receivedMsg.producer_id : ''}: ${receivedMsg.content}`);
         }
 
       }
