@@ -2,7 +2,7 @@
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-  <!-- <script type="text/javascript" src="public/index.js"></script> -->
+  <script type="text/javascript" src="public/index.js"></script>
   <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
   <style>
@@ -22,17 +22,40 @@
   </div>
 </body>
 <script>
-  console.log("ENTERING INDEX JS")
-  var HOST = location.origin.replace(/^http/, 'ws')
-  var ws = new WebSocket(HOST);
-  var el;
+//   $(document).ready(function () {
 
-  console.log("HOST", HOST)
+//     if ("WebSocket" in window) {
+//       var ws = new WebSocket("ws://localhost:3000/")
+//       // const HOST = location.origin.replace(/^http/, 'ws');
+//       // let ws = new WebSocket(`${HOST}`, 'echo-protocol');
+//       // console.log("HOST PORT", HOST)
+//       console.log("WEB SOCKET", ws)
+//       ws.onopen = function () {
+//         console.log("Connection created")
+//       };
 
-  ws.onmessage = function (event) {
-    console.log("EVENT", event)
-  el = document.getElementById('server-time');
-  el.innerHTML = 'Server time: ' + event.data;
-  };
+//       ws.onmessage = function (evt) {
+//         let receivedMsg = JSON.parse(evt.data)
+//         if ((receivedMsg.content && typeof receivedMsg.content === 'number' && receivedMsg.content <= 20 && receivedMsg.content >= 0) || typeof receivedMsg === 'number' && receivedMsg <= 20 && receivedMsg >= 0) {
+//           console.log("UPODATEING EVENT", receivedMsg)
+//           updateData(data, evt.data)
+//           chart = new Chart(ctx, {
+//             type: 'line',
+//             data: data
+//           })
+//         } else if (typeof receivedMsg.content === 'string') {
+//           console.log("RECEIVED MSG", receivedMsg)
+//           alertify.success(`${receivedMsg.producer_id ? receivedMsg.producer_id : ''}: ${receivedMsg.content}`);
+//         }
+
+//       }
+
+//       ws.onclose = function () {
+//         console.log("Connection closed")
+//       }
+//     } else {
+//       alert("WebSocket NOT supported by your Browser!")
+//     }
+// });
 </script>
 </html>
