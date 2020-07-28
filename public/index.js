@@ -1,3 +1,6 @@
+// require('dotenv').config()
+
+// console.log("PROCESS ENV", process.env)
 $(document).ready(function () {
   var count = 10;
   var data = {

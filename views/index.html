@@ -2,10 +2,9 @@
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-  <script type="text/javascript" src="public/index.js"></script>
+  <!-- <script type="text/javascript" src="public/index.js"></script> -->
   <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/"></script>
   <style>
     .chart-container {
       width: 1000px;
@@ -18,8 +17,22 @@
 
   </div>
   <h1>KAFKA DEMO</h1>
-  <div class="chart-container">
+  <div id="server-time" class="chart-container">
     <canvas id="myChart"></canvas>
   </div>
 </body>
+<script>
+  console.log("ENTERING INDEX JS")
+  var HOST = location.origin.replace(/^http/, 'ws')
+  var ws = new WebSocket(HOST);
+  var el;
+
+  console.log("HOST", HOST)
+
+  ws.onmessage = function (event) {
+    console.log("EVENT", event)
+  el = document.getElementById('server-time');
+  el.innerHTML = 'Server time: ' + event.data;
+  };
+</script>
 </html>

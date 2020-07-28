@@ -2,16 +2,111 @@
 
 <head>
   <title>{{title}}</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script type="text/javascript" src="public/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <!-- <script type="text/javascript" src="public/index.js"></script> -->
+  <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+  <style>
+    .chart-container {
+      width: 1000px;
+      height: 600px
+    }
+  </style>
   {{{meta}}}
 </head>
 
 <body>
   <!--vue-ssr-outlet-->
+  <div class="elem-demo">
+
+  </div>
   <h1>KAFKA DEMO</h1>
-  <canvas id="myChart" width="400" height="400"></canvas>
+  <div class="chart-container">
+    <canvas id="myChart"></canvas>
+  </div>
 </body>
+
+<script>
+  $(document).ready(function () {
+  console.log("TITLE", title)
+  console.log("GETTING FDATATAA")
+  var count = 10;
+  var data = {
+    labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    datasets: [{
+      fillColor: "rgba(220, 220, 220, 0.5) ",
+      strokeColor: "rgba(220, 220, 220, 1) ",
+      pointColor: "rgba(220, 220, 220, 1) ",
+      pointStrokeColor: "#fff",
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    }]
+  }
+  var updateData = function (oldVal, newVal) {
+    var labels = oldVal["labels"]
+    var dataSetInitial = oldVal["datasets"][0]["data"]
+    labels.shift()
+    count++
+    labels.push(count.toString())
+    var newData = Math.floor(newVal)
+    dataSetInitial.push(newData)
+    dataSetInitial.shift()
+  }
+  var ctx = document.getElementById("myChart").getContext("2d")
+  var chart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  })
+
+  function webSocketInvoke() {
+
+    if ("WebSocket" in window) {
+      // var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
+      const HOST = location.origin.replace(/^http/, 'ws');
+      let ws = new WebSocket(`${HOST}`, 'echo-protocol');
+      console.log("GETTING DATAAA", title)
+      console.log("HOST PORT", HOST)
+      console.log("WEB SOCKET", ws)
+      console.log("HOLA HOALAAA")
+      ws.onopen = function () {
+        console.log("Connection created")
+      };
+
+      ws.onmessage = function (evt) {
+        let receivedMsg = JSON.parse(evt.data)
+        if ((receivedMsg.content && typeof receivedMsg.content === 'number' && receivedMsg.content <= 20 && receivedMsg.content >= 0) || typeof receivedMsg === 'number' && receivedMsg <= 20 && receivedMsg >= 0) {
+          console.log("UPODATEING EVENT", receivedMsg)
+          updateData(data, evt.data)
+          chart = new Chart(ctx, {
+            type: 'line',
+            data: data
+          })
+        } else if (typeof receivedMsg.content === 'string') {
+          console.log("RECEIVED MSG", receivedMsg)
+          alertify.success(`${receivedMsg.producer_id ? receivedMsg.producer_id : ''}: ${receivedMsg.content}`);
+        }
+
+      }
+
+      ws.onclose = function () {
+        console.log("Connection closed")
+      }
+    } else {
+      alert("WebSocket NOT supported by your Browser!")
+    }
+  }
+  webSocketInvoke();
+});
+</script>
 
 </html>
