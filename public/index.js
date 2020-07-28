@@ -43,10 +43,10 @@ $(document).ready(function () {
   function webSocketInvoke() {
 
     if ("WebSocket" in window) {
-      // var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
-      const HOST = location.origin.replace(/^http/, 'ws');
-      let ws = new WebSocket(`${HOST}`, 'echo-protocol');
-      console.log("HOST PORT", HOST)
+      var ws = new WebSocket("ws://localhost:1200/", "echo-protocol")
+      // const HOST = location.origin.replace(/^http/, 'ws');
+      // let ws = new WebSocket(`${HOST}`, 'echo-protocol');
+      // console.log("HOST PORT", HOST)
       console.log("WEB SOCKET", ws)
       ws.onopen = function () {
         console.log("Connection created")

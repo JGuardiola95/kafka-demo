@@ -16,6 +16,7 @@ const kafkaConsumer = require("./kafka/consumer")
 const { create } = require('domain')
 
 const server = express()
+const server2 = express()
 
 server.get('/public/index.js', function (req, res) {
   res.sendFile(path.join(__dirname + '/public/index.js'))
@@ -52,7 +53,8 @@ server.get('/test', (req, res) => {
   })
 })
 
-let wsServer = server.listen(process.env.PORT || 3000, () => console.log("app listening on port 3000!"))
+server.listen(process.env.PORT || 3000, () => console.log("app listening on port 3000!"))
+wsServer = server2.listen(1200, () => console.log('WS listening on port 1200'))
 wsServer = new WebSocketServer({
   httpServer: wsServer,
   autoAcceptConnections: false
