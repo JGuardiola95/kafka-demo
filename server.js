@@ -60,8 +60,8 @@ wsServer = new WebSocketServer({
 
 wsServer.on('request', function (request) {
 
-  let connection = request.accept('echo-protocol', request.origin)
-  console.log("REQUEST OROGIN", request.origin)
+  let connection = request.accept('echo-protocol', `${request.origin}:${process.env.PORT}`)
+  console.log("REQUEST OROGIN", `${request.origin}:${process.env.PORT}`)
   console.log((new Date()) + ' Connection accepted.')
 
   kafkaConsumer(connection)
