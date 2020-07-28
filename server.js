@@ -52,7 +52,7 @@ server.get('/test', (req, res) => {
   })
 })
 
-let wsServer = server.listen(3000, () => console.log("app listening on port 3000!"))
+let wsServer = server.listen(process.env.PORT || 3000, () => console.log("app listening on port 3000!"))
 wsServer = new WebSocketServer({
   httpServer: wsServer,
   autoAcceptConnections: false
