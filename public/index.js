@@ -31,7 +31,7 @@ $(document).ready(function () {
     if ("WebSocket" in window) {
       // var ws = new WebSocket("ws://localhost:3000/", "echo-protocol")
       const HOST = location.origin.replace(/^http/, 'ws');
-      let ws = new WebSocket(HOST);
+      let ws = new WebSocket(HOST, 'echo-protocol');
 
       ws.onopen = function () {
         console.log("Connection created")
